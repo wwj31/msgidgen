@@ -1,4 +1,4 @@
-module msgidgen
+module github.com/wwj31/msgidgen
 
 go 1.19
 
