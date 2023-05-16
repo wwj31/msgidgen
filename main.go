@@ -4,12 +4,12 @@ import (
 	"bufio"
 	"flag"
 	"fmt"
+	"hash/fnv"
 	"io/fs"
 	"log"
 	"os"
 	"path/filepath"
 	"regexp"
-	"strconv"
 	"strings"
 	"text/template"
 
@@ -77,7 +77,6 @@ func main() {
 
 	var (
 		content string
-		counter int
 		tagMap  string
 	)
 	err = filepath.WalkDir(*protoPath, func(path string, d fs.DirEntry, err error) error {
@@ -119,8 +118,7 @@ func main() {
 
 			if head == "message" && (req.Match(body) || rsp.Match(body)) {
 				body = *prefix + extractWordsAndToUpper(body)
-				counter++
-				numStr := strconv.Itoa(counter)
+				numStr := hashStringToInt64(body)
 				content += fmt.Sprintf("    %v = %v;", body, numStr)
 				if tagStr != "" {
 					val := strings.Split(tagStr, ":")[1]
@@ -180,4 +178,10 @@ func extractWordsAndToUpper(input string) string {
 	}
 
 	return result
+}
+
+func hashStringToInt64(str string) int64 {
+	h := fnv.New64a()
+	h.Write([]byte(str))
+	return int64(h.Sum64())
 }
