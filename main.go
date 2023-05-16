@@ -7,6 +7,7 @@ import (
 	"hash/fnv"
 	"io/fs"
 	"log"
+	"math"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -183,5 +184,12 @@ func extractWordsAndToUpper(input string) string {
 func hashStringToInt64(str string) int64 {
 	h := fnv.New64a()
 	h.Write([]byte(str))
-	return int64(h.Sum64())
+	hashValue := h.Sum64()
+
+	// 将哈希值转换为 int64，并处理溢出情况
+	result := int64(hashValue)
+	if result < 0 {
+		result = -result
+	}
+	return result % math.MaxInt64
 }
