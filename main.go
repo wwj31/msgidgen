@@ -74,6 +74,7 @@ func main() {
 
 	req, _ := glob.Compile("*Req")
 	rsp, _ := glob.Compile("*Rsp")
+	ntf, _ := glob.Compile("*Ntf")
 	tag, _ := glob.Compile("tag:*")
 
 	var (
@@ -117,7 +118,7 @@ func main() {
 				}
 			}
 
-			if head == "message" && (req.Match(body) || rsp.Match(body)) {
+			if head == "message" && (req.Match(body) || rsp.Match(body) || ntf.Match(body)) {
 				body = *prefix + extractWordsAndToUpper(body)
 				numStr := hashStringToInt64(body)
 				content += fmt.Sprintf("    %v = %v;", body, numStr)
